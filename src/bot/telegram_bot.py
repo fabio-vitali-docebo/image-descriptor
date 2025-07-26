@@ -69,14 +69,15 @@ class ImageDescriptionBot:
         )
         self.application.add_error_handler(self.error_handler)
 
-    async def start(self) -> None:
+    def start(self) -> None:
         """Start the bot."""
         print("Starting bot...")
         self.setup_handlers()
         print("Bot started, polling for updates...")
         
         try:
-            await self.application.run_polling(
+            # Use run_polling() which manages its own event loop
+            self.application.run_polling(
                 allowed_updates=Update.ALL_TYPES,
                 drop_pending_updates=True,
                 read_timeout=30,

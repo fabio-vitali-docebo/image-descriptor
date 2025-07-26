@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from src.bot.telegram_bot import ImageDescriptionBot
 from src.services.vision_service import OpenAIVisionService
 
-async def main():
+def main():
     # Load environment variables
     load_dotenv()
     
@@ -22,14 +22,12 @@ async def main():
     
     # Start the bot
     try:
-        await bot.start()
+        bot.start()
     except KeyboardInterrupt:
         print("\nShutting down...")
-        await bot.stop()
     except Exception as e:
         print(f"Error: {e}")
         raise
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main()) 
+    main() 
