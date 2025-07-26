@@ -128,37 +128,86 @@ terraform apply
 
 ## Test
 
-Il progetto include una suite completa di test end-to-end che può essere eseguita localmente.
+Il progetto include una suite completa di test che può essere eseguita localmente.
 
 ### Eseguire i test
 
+#### Quick Start
+
 ```bash
-# Metodo raccomandato - usa Make
-make test
+make test          # Esegui tutti i test (raccomandato per sviluppo)
+make test-unit     # Esegui solo test rapidi unitari
+make test-e2e      # Esegui solo test di integrazione completi
+```
 
-# Oppure metodi alternativi:
-python test_runner.py
-python run_tests.py
+#### Make Commands (Raccomandato)
 
-# Test con coverage report
-python run_tests.py --coverage
-make test-coverage
+```bash
+# Tutti i test
+make test              # Esegui tutti i test
+make test-all          # Alias per make test
+
+# Test specifici per tipologia
+make test-unit         # Solo test unitari
+make test-integration  # Solo test di integrazione/e2e
+make test-e2e          # Alias per test-integration
+
+# Test con strumenti specifici
+make test-pytest       # Usa pytest (solo test sincroni)
+make test-coverage     # Test con report di copertura
+```
+
+#### Test Runner Diretto
+
+```bash
+# Test runner personalizzato (supporta tutti i test async/sync)
+python test_runner.py                    # Tutti i test
+python test_runner.py --type unit        # Solo test unitari
+python test_runner.py --type e2e         # Solo test e2e
+python test_runner.py --type integration # Solo test integrazione
+
+# Test runner avanzato con più opzioni
+python run_tests.py                              # Tutti i test (runner personalizzato)
+python run_tests.py --type unit                  # Solo test unitari
+python run_tests.py --type e2e                   # Solo test e2e
+python run_tests.py --runner pytest              # Usa pytest
+python run_tests.py --runner simple              # Usa runner personalizzato
+python run_tests.py --coverage                   # Con coverage report
+python run_tests.py --file tests/test_unit.py    # File specifico
 ```
 
 ### Tipologie di test
 
-- **Test Unitari**: Testano i singoli componenti (vision service, bot handlers)
-- **Test di Integrazione**: Testano il flusso completo end-to-end
+- **Test Unitari** (`tests/test_unit.py`): Testano i singoli componenti (vision service, bot handlers)
+- **Test di Integrazione** (`tests/test_e2e.py`): Testano il flusso completo end-to-end
+- **Test Componenti** (`tests/test_telegram_bot.py`, `tests/test_vision_service.py`): Test specifici per componenti
 - **Test di Resilienza**: Testano la gestione degli errori e la robustezza
+
+### Test Coverage
 
 I test includono:
 
-- ✅ Riconoscimento e estrazione informazioni eventi
-- ✅ Descrizioni in italiano
-- ✅ Citazioni dei messaggi originali
-- ✅ Gestione errori con messaggi in italiano
-- ✅ Test AWS Lambda handler
-- ✅ Test resilienza e recupero errori
+- ✅ **Test Unitari (12 test)**:
+  - Inizializzazione servizi e bot
+  - Importazione moduli
+  - Validazione configurazioni
+  
+- ✅ **Test End-to-End (7 test)**:
+  - Flusso completo elaborazione immagini
+  - Riconoscimento e estrazione informazioni eventi
+  - AWS Lambda handler completo
+  - Test resilienza e recupero errori
+  
+- ✅ **Test Componenti**:
+  - Telegram bot handlers (11 test)
+  - Vision service con OpenAI (6 test)
+
+- ✅ **Funzionalità Testate**:
+  - Descrizioni in italiano
+  - Citazioni dei messaggi originali
+  - Gestione errori con messaggi in italiano
+  - Elaborazione concorrente
+  - Degradazione controllata
 
 ## Configurazione API Keys
 
