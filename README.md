@@ -1,110 +1,94 @@
-# Telegram Image Description Bot
+# Image Descriptor Bot
 
-A Telegram bot that automatically provides detailed descriptions of images posted in a channel using OpenAI's Vision API.
+Un bot Telegram che fornisce descrizioni dettagliate delle immagini in italiano utilizzando OpenAI Vision API.
 
 ## Features
 
-- Automatically detects and processes images posted in a Telegram channel
-- Generates detailed descriptions using OpenAI Vision API (gpt-4o-mini)
-- Extensible architecture for easy integration of different multimodal LLMs
-- Serverless deployment on AWS Lambda
-- Infrastructure as Code using Terraform
+- Risponde automaticamente quando viene postata un'immagine nel canale
+- Fornisce descrizioni dettagliate delle immagini in italiano
+- Cita il post originale con l'immagine
+- Architettura modulare per sostituire facilmente il modello multimodale
+- Deployabile su AWS Lambda con API Gateway
+- Gestione sicura delle API key tramite AWS SSM Parameter Store
 
 ## Prerequisites
 
 - Python 3.9+
-- Terraform 1.0+
-- AWS CLI configured with appropriate permissions
-- Telegram Bot Token (from [@BotFather](https://t.me/botfather))
-- OpenAI API Key
+- AWS CLI configurato
+- Terraform
+- Account Telegram Bot (ottenuto tramite @BotFather)
+- API key OpenAI
+
+## Funzionalità del Bot
+
+Il bot risponde alle immagini con:
+1. Una citazione del messaggio originale
+2. La frase "Ecco la descrizione dell'immagine:"
+3. Una descrizione dettagliata in italiano dell'immagine
 
 ## Project Structure
 
 ```
-.
+image-descriptor/
 ├── src/
-│   ├── bot/            # Telegram bot implementation
-│   ├── services/       # Vision services implementation
-│   └── handlers/       # AWS Lambda handlers
-├── terraform/          # Infrastructure as Code
-├── tests/             # Unit and integration tests
-├── requirements.txt   # Python dependencies
-└── README.md         # This file
+│   ├── bot/
+│   │   └── telegram_bot.py      # Bot Telegram principale
+│   ├── services/
+│   │   └── vision_service.py    # Servizio di visione (OpenAI)
+│   ├── handlers/
+│   │   └── lambda_handler.py    # Handler AWS Lambda
+│   └── local.py                 # Script per test locali
+├── terraform/
+│   ├── main.tf                  # Infrastruttura AWS
+│   └── variables.tf             # Variabili Terraform
+├── requirements.txt             # Dipendenze Python
+└── README.md
 ```
 
-## Setup Instructions
+## Setup Locale
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/telegram-image-descriptor
-   cd telegram-image-descriptor
-   ```
-
-2. **Create and activate virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure AWS SSM Parameters**
-   
-   Create the following parameters in AWS SSM:
-   - `/telegram-bot/prod/telegram-token`
-   - `/telegram-bot/prod/openai-api-key`
-
-5. **Deploy Infrastructure**
-   ```bash
-   cd terraform
-   terraform init
-   terraform plan
-   terraform apply
-   ```
-
-## Local Development
-
-1. **Set up environment variables**
-   ```bash
-   # Create .env file in project root
-   echo "TELEGRAM_TOKEN=your_telegram_token" > .env
-   echo "OPENAI_API_KEY=your_openai_api_key" >> .env
-   ```
-
-2. **Run the bot locally**
-   ```bash
-   PYTHONPATH=. python src/local.py
-   ```
-
-## Testing
-
+1. Clona il repository:
 ```bash
-pytest tests/
+git clone <your-repo-url>
+cd image-descriptor
 ```
 
-## Deployment
+2. Crea un ambiente virtuale:
+```bash
+python -m venv venv
+source venv/bin/activate  # Su Windows: venv\Scripts\activate
+```
 
-The bot is automatically deployed to AWS Lambda when changes are pushed to the main branch.
+3. Installa le dipendenze:
+```bash
+pip install -r requirements.txt
+```
 
-## Architecture
+4. Crea un file `.env` nella root del progetto:
+```bash
+TELEGRAM_TOKEN=your_telegram_bot_token_here
+OPENAI_API_KEY=your_openai_api_key_here
+```
 
-The bot uses a serverless architecture:
-- AWS API Gateway receives webhook updates from Telegram
-- AWS Lambda processes the updates and calls OpenAI Vision API
-- AWS SSM Parameter Store securely stores API keys
-- Terraform manages all AWS resources
+5. Esegui il bot localmente:
+```bash
+PYTHONPATH=. python src/local.py
+```
 
-## Contributing
+## Deploy su AWS
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Configura le credenziali AWS
+2. Aggiorna le variabili in `terraform/variables.tf`
+3. Esegui Terraform:
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
 
-## License
+## Configurazione API Keys
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+Le API key vengono memorizzate in AWS SSM Parameter Store:
+- `/image-descriptor/telegram-token`
+- `/image-descriptor/openai-api-key` 

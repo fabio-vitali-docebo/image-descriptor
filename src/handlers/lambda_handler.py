@@ -21,6 +21,7 @@ async def process_update(update_data: dict, telegram_token: str, openai_api_key:
         # Extract message data
         message = update_data.get('message', {})
         chat_id = message.get('chat', {}).get('id')
+        message_id = message.get('message_id')
         
         if not chat_id:
             return {"statusCode": 200, "body": "No chat ID found"}
@@ -32,7 +33,7 @@ async def process_update(update_data: dict, telegram_token: str, openai_api_key:
             url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
             payload = {
                 "chat_id": chat_id,
-                "text": "Hello! I'm an Image Description Bot. Send me an image and I'll describe it for you!"
+                "text": "Ciao! Sono Image Descriptor Bot. Inviami un'immagine e ti fornirò una descrizione dettagliata!"
             }
             requests.post(url, json=payload)
             return {"statusCode": 200, "body": "Start message sent"}
@@ -55,29 +56,57 @@ async def process_update(update_data: dict, telegram_token: str, openai_api_key:
                 # Get description from vision service
                 description = await vision_service.describe_image(image_url)
                 
-                # Send description back
+                # Format the response with Italian intro sentence
+                response_text = f"Ecco la descrizione dell'immagine:\n\n{description}"
+                
+                # Send description back with citation (reply to original message)
                 url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
                 payload = {
                     "chat_id": chat_id,
-                    "text": description
+                    "text": response_text,
+                    "reply_to_message_id": message_id
                 }
                 requests.post(url, json=payload)
                 
                 return {"statusCode": 200, "body": "Description sent"}
             else:
+                # Send error message in Italian with citation
+                url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+                payload = {
+                    "chat_id": chat_id,
+                    "text": "Mi dispiace, non sono riuscito a elaborare questa immagine. Riprova più tardi.",
+                    "reply_to_message_id": message_id
+                }
+                requests.post(url, json=payload)
                 return {"statusCode": 400, "body": "Failed to get file from Telegram"}
         
         return {"statusCode": 200, "body": "Update processed"}
         
     except Exception as e:
+        # Send error message in Italian if possible
+        if 'message' in locals():
+            message = update_data.get('message', {})
+            chat_id = message.get('chat', {}).get('id')
+            message_id = message.get('message_id')
+            
+            if chat_id:
+                import requests
+                url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+                payload = {
+                    "chat_id": chat_id,
+                    "text": "Mi dispiace, si è verificato un errore. Riprova più tardi.",
+                    "reply_to_message_id": message_id
+                }
+                requests.post(url, json=payload)
+        
         return {"statusCode": 500, "body": f"Error processing update: {str(e)}"}
 
 def lambda_handler(event, context):
     """AWS Lambda handler function."""
     try:
         # Get API keys from SSM
-        telegram_token = get_ssm_parameter("/telegram-bot/prod/telegram-token")
-        openai_api_key = get_ssm_parameter("/telegram-bot/prod/openai-api-key")
+        telegram_token = get_ssm_parameter("/image-descriptor/telegram-token")
+        openai_api_key = get_ssm_parameter("/image-descriptor/openai-api-key")
         
         # Parse the webhook data
         if 'body' in event:

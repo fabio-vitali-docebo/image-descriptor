@@ -49,7 +49,7 @@ class OpenAIVisionService(VisionService):
                     {
                         "role": "user",
                         "content": [
-                            {"type": "text", "text": "Please provide a detailed description of this image."},
+                            {"type": "text", "text": "Fornisci una descrizione dettagliata di questa immagine in italiano. Sii specifico e descrivi tutti gli elementi visibili, i colori, le persone, gli oggetti, l'ambiente e l'atmosfera generale."},
                             {
                                 "type": "image_url",
                                 "image_url": {

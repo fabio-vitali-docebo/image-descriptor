@@ -25,7 +25,7 @@ class ImageDescriptionBot:
         """Handle /start command."""
         if update.effective_user:
             await update.message.reply_text(
-                "Hello! I'm an Image Description Bot. Send me an image and I'll describe it for you!"
+                "Ciao! Sono Image Descriptor Bot. Inviami un'immagine e ti fornirò una descrizione dettagliata!"
             )
 
     async def handle_image(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -52,13 +52,17 @@ class ImageDescriptionBot:
             # Get image description from vision service
             description = await self.vision_service.describe_image(file_url)
             
-            # Reply with the description
-            await update.message.reply_text(description)
+            # Format the response with Italian intro sentence
+            response_text = f"Ecco la descrizione dell'immagine:\n\n{description}"
+            
+            # Reply to the original message with the description (this creates a citation)
+            await update.message.reply_text(response_text, reply_to_message_id=update.message.message_id)
             
         except Exception as e:
             if update.message:
                 await update.message.reply_text(
-                    "Sorry, I couldn't process this image. Please try again later."
+                    "Mi dispiace, non sono riuscito a elaborare questa immagine. Riprova più tardi.",
+                    reply_to_message_id=update.message.message_id
                 )
 
     def setup_handlers(self) -> None:
@@ -71,9 +75,9 @@ class ImageDescriptionBot:
 
     def start(self) -> None:
         """Start the bot."""
-        print("Starting bot...")
+        print("Starting Image Descriptor Bot...")
         self.setup_handlers()
-        print("Bot started, polling for updates...")
+        print("Image Descriptor Bot started, polling for updates...")
         
         try:
             # Use run_polling() which manages its own event loop
@@ -91,6 +95,6 @@ class ImageDescriptionBot:
 
     async def stop(self) -> None:
         """Stop the bot."""
-        print("Stopping bot...")
+        print("Stopping Image Descriptor Bot...")
         await self.application.stop()
-        print("Bot stopped") 
+        print("Image Descriptor Bot stopped") 
