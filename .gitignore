@@ -46,6 +46,13 @@ terraform.rc
 # AWS
 .aws/
 
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
 # Logs
 *.log
 logs/ 
