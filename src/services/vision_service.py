@@ -49,7 +49,25 @@ class OpenAIVisionService(VisionService):
                     {
                         "role": "user",
                         "content": [
-                            {"type": "text", "text": "Fornisci una descrizione dettagliata di questa immagine in italiano. Sii specifico e descrivi tutti gli elementi visibili, i colori, le persone, gli oggetti, l'ambiente e l'atmosfera generale."},
+                            {
+                                "type": "text", 
+                                "text": """Analizza questa immagine e rispondi in italiano. 
+
+PRIMO: Determina se si tratta di un annuncio di evento (concerto, conferenza, festival, spettacolo, mostra, etc.).
+
+SE È UN ANNUNCIO DI EVENTO, estrai e presenta queste informazioni in questo formato:
+🎫 INFORMAZIONI EVENTO
+• Nome evento: [nome dell'evento]
+• Descrizione: [breve descrizione dell'evento]
+• Data: [data/e dell'evento]
+• Orario: [orario di inizio e fine se disponibile]
+• Luogo: [nome del luogo/venue e indirizzo se disponibile]
+• Organizzatore: [se indicato]
+• Prezzo/Biglietti: [informazioni sui biglietti se disponibili]
+• Contatti: [siti web, telefoni, email se disponibili]
+
+SECONDO: Fornisci sempre una descrizione dettagliata dell'immagine, includendo tutti gli elementi visibili, i colori, lo stile grafico, il layout, le persone (se presenti), gli oggetti e l'atmosfera generale."""
+                            },
                             {
                                 "type": "image_url",
                                 "image_url": {
@@ -59,7 +77,7 @@ class OpenAIVisionService(VisionService):
                         ]
                     }
                 ],
-                max_tokens=300
+                max_tokens=500
             )
             
             description = response.choices[0].message.content

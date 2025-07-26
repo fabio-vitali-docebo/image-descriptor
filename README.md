@@ -24,7 +24,15 @@ Un bot Telegram che fornisce descrizioni dettagliate delle immagini in italiano 
 Il bot risponde alle immagini con:
 1. Una citazione del messaggio originale
 2. La frase "Ecco la descrizione dell'immagine:"
-3. Una descrizione dettagliata in italiano dell'immagine
+3. **Riconoscimento eventi**: Se l'immagine contiene un annuncio di evento, estrae automaticamente:
+   - Nome dell'evento
+   - Descrizione breve
+   - Date e orari
+   - Luogo/venue
+   - Organizzatore
+   - Informazioni sui biglietti
+   - Contatti
+4. Una descrizione dettagliata in italiano dell'immagine
 
 ## Project Structure
 
